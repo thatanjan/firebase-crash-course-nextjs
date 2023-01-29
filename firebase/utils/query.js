@@ -1,6 +1,7 @@
-import { getDocs, onSnapshot, query } from 'firebase/firestore'
+import { doc, getDoc, getDocs, onSnapshot, query } from 'firebase/firestore'
 
 import { usersColRef, postsColRef } from './dbRefs'
+import db from '../config'
 
 const getDocDataCb = doc => ({ ...doc.data(), id: doc.id })
 const getData = snapshot => snapshot.docs.map(getDocDataCb)
@@ -29,4 +30,9 @@ const getDocsData = colRef => async () => {
 const getUsers = getDocsData(usersColRef)
 const getPosts = getDocsData(postsColRef)
 
-export { getUsers, getPosts }
+const getSingleDoc = colName => paths => getDoc(doc(db, colName, ...paths))
+
+const getSingleUser = getSingleDoc('users')
+const getSinglePost = getSingleDoc('posts')
+
+export { getUsers, getPosts, getSingleUser, getSinglePost }
