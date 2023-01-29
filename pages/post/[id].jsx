@@ -6,8 +6,6 @@ const PostPage = ({}) => {
 		query: { id },
 	} = useRouter()
 
-	console.log(id)
-
 	return <div>{id}</div>
 }
 
