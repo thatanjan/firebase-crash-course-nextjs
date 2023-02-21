@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 
 import { getUsers } from '../firebase/utils/query'
+import { addPost } from '../firebase/utils/mutate'
 
 const initialFormValue = { title: '', content: '', user: '' }
 
@@ -39,11 +40,14 @@ const AddNewDocumentForm = () => {
 		})
 	}
 
-	const handleSubmit = event => {
+	const handleSubmit = async event => {
 		event.preventDefault()
-		console.log(formData)
-		setFormData(initialFormValue)
-		onClose()
+		const hasAdded = await addPost(formData)
+
+		if (hasAdded) {
+			setFormData(initialFormValue)
+			onClose()
+		}
 	}
 
 	return (

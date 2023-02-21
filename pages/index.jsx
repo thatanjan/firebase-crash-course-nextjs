@@ -1,8 +1,9 @@
-import { Heading } from '@chakra-ui/react'
+import { Heading, Button, HStack } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 
 import { getPosts } from '../firebase/utils/query'
 import PostCardList from '../components/PostCardList'
+import AddNewDocumentForm from '../components/AddNewDocumentForm'
 
 const Home = () => {
 	const [data, setdata] = useState([])
@@ -17,8 +18,13 @@ const Home = () => {
 	return (
 		<>
 			<Heading textAlign='center' textTransform='uppercase' py='3rem'>
-				Post
+				Posts
 			</Heading>
+
+			<HStack variant='solid' spacing='6' mb='3rem'>
+				<AddNewDocumentForm />
+			</HStack>
+
 			<PostCardList data={data} />
 		</>
 	)
