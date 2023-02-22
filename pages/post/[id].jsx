@@ -11,10 +11,10 @@ import { getSinglePost } from '../../firebase/utils/query.js'
 import { useState, useEffect } from 'react'
 
 import EditDocumentForm from '../../components/EditDocumentForm'
+import { onSnapshot } from 'firebase/firestore'
 
 const PostPage = ({}) => {
 	const [postData, setPostData] = useState({})
-
 	const [postDocRef, setpostDocRef] = useState({})
 
 	const {
@@ -22,12 +22,19 @@ const PostPage = ({}) => {
 	} = useRouter()
 
 	useEffect(() => {
-		if (!id) return undefined
+		if (!id) return
+
+		let unsubscribe = () => {}
+
 		;(async () => {
 			const postSnap = await getSinglePost([id])
 			setPostData(postSnap.data())
 			setpostDocRef(postSnap.ref)
+
+			unsubscribe = onSnapshot(postSnap.ref, doc => setPostData(doc.data()))
 		})()
+
+		return unsubscribe
 	}, [id])
 
 	const { title, content } = postData

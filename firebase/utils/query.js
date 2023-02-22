@@ -1,4 +1,4 @@
-import { doc, getDoc, getDocs, onSnapshot, query } from 'firebase/firestore'
+import { doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore'
 
 import { usersColRef, postsColRef } from './dbRefs'
 import db from '../config'
@@ -9,8 +9,8 @@ const getData = snapshot => snapshot.docs.map(getDocDataCb)
 /* NOTE: For getting static data */
 const getDocsData = colRef => async () => {
 	try {
-		const snapshot = await getDocs(colRef)
-		return getData(snapshot)
+		const docs = await getDocs(colRef)
+		return getData(docs)
 	} catch (error) {
 		console.log(error)
 		return []
