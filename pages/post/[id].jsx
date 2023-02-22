@@ -1,9 +1,7 @@
 import {
 	Heading,
-	Box,
 	Card,
 	CardHeader,
-	Button,
 	Text,
 	CardBody,
 	CardFooter,
@@ -12,8 +10,12 @@ import { useRouter } from 'next/router'
 import { getSinglePost } from '../../firebase/utils/query.js'
 import { useState, useEffect } from 'react'
 
+import EditDocumentForm from '../../components/EditDocumentForm'
+
 const PostPage = ({}) => {
 	const [postData, setPostData] = useState({})
+
+	const [postDocRef, setpostDocRef] = useState({})
 
 	const {
 		query: { id },
@@ -24,6 +26,7 @@ const PostPage = ({}) => {
 		;(async () => {
 			const postSnap = await getSinglePost([id])
 			setPostData(postSnap.data())
+			setpostDocRef(postSnap.ref)
 		})()
 	}, [id])
 
@@ -43,7 +46,9 @@ const PostPage = ({}) => {
 					<Text>{content}</Text>
 				</CardBody>
 				<CardFooter>
-					<Button>Edit</Button>
+					{postData.title && (
+						<EditDocumentForm postDocRef={postDocRef} postData={postData} />
+					)}
 				</CardFooter>
 			</Card>
 		</>
