@@ -18,21 +18,26 @@ const getDocsData = colRef => async () => {
 }
 
 /* NOTE: For gettting real time data */
-/* const getDocsData = colRef => { */
-/* 	try { */
-/* 		onSnapshot(colRef, async snapshot => getData(snapshot)) */
-/* 	} catch (error) { */
-/* 		console.log(error) */
-/* 		return [] */
-/* 	} */
-/* } */
+const getRealtimeDocsData = colRef => async setData => {
+	try {
+		return onSnapshot(colRef, async snapshot => {
+			const data = await getData(snapshot)
+			setData(data)
+		})
+	} catch (error) {
+		console.log(error)
+		return []
+	}
+}
 
 const getUsers = getDocsData(usersColRef)
 const getPosts = getDocsData(postsColRef)
+
+const getRealTimePosts = getRealtimeDocsData(postsColRef)
 
 const getSingleDoc = colName => paths => getDoc(doc(db, colName, ...paths))
 
 const getSingleUser = getSingleDoc('users')
 const getSinglePost = getSingleDoc('posts')
 
-export { getUsers, getPosts, getSingleUser, getSinglePost }
+export { getUsers, getPosts, getSingleUser, getSinglePost, getRealTimePosts }

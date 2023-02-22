@@ -1,17 +1,28 @@
 import { Heading, Button, HStack } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 
-import { getPosts } from '../firebase/utils/query'
+import { getPosts, getRealTimePosts } from '../firebase/utils/query'
+
 import PostCardList from '../components/PostCardList'
 import AddNewDocumentForm from '../components/AddNewDocumentForm'
 
 const Home = () => {
 	const [data, setdata] = useState([])
 
+	// For static
+	// useEffect(() => {
+	// 	;(async () => {
+	// 		const posts = await getPosts()
+	// 		setdata(posts)
+	// 	})()
+	// }, [])
+
+	// For real time data
 	useEffect(() => {
 		;(async () => {
-			const posts = await getPosts()
-			setdata(posts)
+			const unsubscribe = await getRealTimePosts(setdata)
+
+			return unsubscribe
 		})()
 	}, [])
 
