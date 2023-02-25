@@ -5,9 +5,11 @@ import { getPosts, getRealTimePosts } from '../firebase/utils/query'
 
 import PostCardList from '../components/PostCardList'
 import AddNewDocumentForm from '../components/AddNewDocumentForm'
+import { useRouter } from 'next/router'
 
 const Home = () => {
 	const [data, setdata] = useState([])
+	const { push } = useRouter()
 
 	// For static
 	// useEffect(() => {
@@ -34,6 +36,10 @@ const Home = () => {
 
 			<HStack variant='solid' spacing='6' mb='3rem'>
 				<AddNewDocumentForm />
+
+				<Button onClick={() => push('/users')} colorScheme='blue'>
+					Show all users
+				</Button>
 			</HStack>
 
 			<PostCardList data={data} />
