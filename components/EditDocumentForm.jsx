@@ -19,18 +19,33 @@ import { updatePost } from '../firebase/utils/mutate'
 
 const EditDocumentForm = ({ postData, postDocRef }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
-	const [formData, setFormData] = useState(postData)
+	const [formData, setFormData] = useState({
+		...postData,
+		tags: postData.tags.join(', '),
+	})
 
 	const handleInputChange = event => {
-		setFormData({
+		const {
+			target: { name, value },
+		} = event
+
+		const changedData = {
 			...formData,
-			[event.target.name]: event.target.value,
-		})
+			[name]: value,
+		}
+
+		setFormData(changedData)
 	}
 
 	const handleSubmit = async event => {
 		event.preventDefault()
-		const hasEdited = await updatePost(postDocRef, formData)
+
+		let tags = formData.tags.split(',').map(tag => tag.trim().toLowerCase())
+		if (!tags.at(-1)) tags.pop()
+		tags = [...new Set(tags)]
+
+		const newFormData = { ...formData, tags }
+		const hasEdited = await updatePost(postDocRef, newFormData)
 
 		if (hasEdited) {
 			onClose()
@@ -63,6 +78,15 @@ const EditDocumentForm = ({ postData, postDocRef }) => {
 								<Input
 									name='content'
 									value={formData.content}
+									onChange={handleInputChange}
+								/>
+							</FormControl>
+
+							<FormControl mt={4}>
+								<FormLabel>Tags</FormLabel>
+								<Input
+									name='tags'
+									value={formData.tags}
 									onChange={handleInputChange}
 								/>
 							</FormControl>

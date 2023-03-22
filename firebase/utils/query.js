@@ -35,9 +35,31 @@ const getPosts = getDocsData(postsColRef)
 
 const getRealTimePosts = getRealtimeDocsData(postsColRef)
 
-const getSingleDoc = colName => paths => getDoc(doc(db, colName, ...paths))
+const getSingleDoc = colName => async paths => {
+	const docSnap = await getDoc(doc(db, colName, ...paths))
+
+	try {
+		if (docSnap.exists) {
+			return {
+				...docSnap.data(),
+				ref: docSnap.ref,
+			}
+		}
+	} catch (error) {
+		console.log(error)
+	}
+
+	return {}
+}
 
 const getSingleUser = getSingleDoc('users')
 const getSinglePost = getSingleDoc('posts')
 
-export { getUsers, getPosts, getSingleUser, getSinglePost, getRealTimePosts }
+export {
+	getUsers,
+	getPosts,
+	getSingleUser,
+	getSinglePost,
+	getRealTimePosts,
+	getData,
+}

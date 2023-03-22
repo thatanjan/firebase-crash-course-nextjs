@@ -5,10 +5,13 @@ import {
 	Text,
 	CardBody,
 	CardFooter,
+	HStack,
+	Tag,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { getSinglePost } from '../../firebase/utils/query.js'
 import { useState, useEffect } from 'react'
+import Link from 'next/link.js'
 
 import EditDocumentForm from '../../components/EditDocumentForm'
 import { onSnapshot } from 'firebase/firestore'
@@ -27,30 +30,44 @@ const PostPage = ({}) => {
 		let unsubscribe = () => {}
 
 		;(async () => {
-			const postSnap = await getSinglePost([id])
-			setPostData(postSnap.data())
-			setpostDocRef(postSnap.ref)
+			const data = await getSinglePost([id])
+			setPostData(data)
+			setpostDocRef(data.ref)
 
-			unsubscribe = onSnapshot(postSnap.ref, doc => setPostData(doc.data()))
+			if (data.ref) {
+				unsubscribe = onSnapshot(data.ref, doc => setPostData(doc.data()))
+			}
 		})()
 
 		return unsubscribe
 	}, [id])
 
-	const { title, content } = postData
+	const { title, content, tags } = postData
 
 	return (
 		<>
-			<Heading textAlign='center' textTransform='uppercase' py='3rem'>
-				Post
-			</Heading>
-
 			<Card maxW='500px' m='0 auto'>
 				<CardHeader>
 					<Heading size='md'>{title}</Heading>
 				</CardHeader>
 				<CardBody>
 					<Text>{content}</Text>
+
+					<HStack alignItems='flex-start' flexWrap='wrap' spacing={4} mt={4}>
+						{tags?.map(tag => (
+							<Tag
+								as={Link}
+								href={`/tag/${tag}`}
+								size='lg'
+								key={tag}
+								variant='solid'
+								colorScheme='teal'
+								mb={2}
+							>
+								{tag}
+							</Tag>
+						))}
+					</HStack>
 				</CardBody>
 				<CardFooter>
 					{postData.title && (

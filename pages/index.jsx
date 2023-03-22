@@ -8,7 +8,7 @@ import AddNewDocumentForm from '../components/AddNewDocumentForm'
 import { useRouter } from 'next/router'
 
 const Home = () => {
-	const [data, setdata] = useState([])
+	const [postsData, setPostsData] = useState([])
 	const { push } = useRouter()
 
 	// For static
@@ -22,7 +22,7 @@ const Home = () => {
 	// For real time data
 	useEffect(() => {
 		;(async () => {
-			const unsubscribe = await getRealTimePosts(setdata)
+			const unsubscribe = await getRealTimePosts(setPostsData)
 
 			return unsubscribe
 		})()
@@ -42,7 +42,7 @@ const Home = () => {
 				</Button>
 			</HStack>
 
-			<PostCardList data={data} />
+			<PostCardList data={postsData} />
 		</>
 	)
 }

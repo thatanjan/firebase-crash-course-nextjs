@@ -18,8 +18,10 @@ import { useEffect, useState } from 'react'
 
 import { getUsers } from '../firebase/utils/query'
 import { addPost } from '../firebase/utils/mutate'
+import { doc } from 'firebase/firestore'
+import db from '../firebase/config'
 
-const initialFormValue = { title: '', content: '', user: '' }
+const initialFormValue = { title: '', content: '', user: '', tags: [] }
 
 const AddNewDocumentForm = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
@@ -34,15 +36,26 @@ const AddNewDocumentForm = () => {
 	}, [])
 
 	const handleInputChange = event => {
-		setFormData({
+		let value = event.target.value
+		const key = event.target.name
+
+		if (key === 'tags') {
+			const tags = value.split(',').map(tag => tag.trim().toLowerCase())
+			value = [...new Set(tags)]
+		}
+
+		const changedData = {
 			...formData,
-			[event.target.name]: event.target.value,
-		})
+			[key]: value,
+		}
+
+		setFormData(changedData)
 	}
 
 	const handleSubmit = async event => {
 		event.preventDefault()
-		const hasAdded = await addPost(formData)
+		const newFormData = { ...formData, user: doc(db, 'users', formData.user) }
+		const hasAdded = await addPost(newFormData)
 
 		if (hasAdded) {
 			setFormData(initialFormValue)
@@ -78,6 +91,15 @@ const AddNewDocumentForm = () => {
 								<Input
 									name='content'
 									value={formData.content}
+									onChange={handleInputChange}
+								/>
+							</FormControl>
+
+							<FormControl mt={4}>
+								<FormLabel>Tags</FormLabel>
+								<Input
+									name='tags'
+									value={formData.tags.join(', ')}
 									onChange={handleInputChange}
 								/>
 							</FormControl>
